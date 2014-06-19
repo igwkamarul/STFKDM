@@ -1,12 +1,13 @@
 <?php
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
 session_start();
-$_SESSION['username']=$row['katanama'];
-			session_register("username");
+//$_SESSION['username']=$row['katanama'];
+	//		session_register("username");
 include 'includes/config.php';
 include 'includes/functions.php';
 
 date_default_timezone_set('Asia/Kuala Lumpur');
-if($_SESSION['no_tempahan']==""){
+if( isset($_SESSION['no_tempahan']) and $_SESSION['no_tempahan']==""){
 		
 	$today = date("ym");
 	$runningno = sprintf("%03d",getrunningno()); 
@@ -16,7 +17,7 @@ if($_SESSION['no_tempahan']==""){
 	
 	
 }
-if($_SESSION['id']==""){
+if(isset($_SESSION['id']) and $_SESSION['id']==""){
 	
 	//$_SESSION['id'] = rand(100, 1000);
 	

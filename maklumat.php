@@ -50,9 +50,10 @@ function isNumberKey(evt)
       }
 
 </script>
-<?
-$dTmph= mysql_fetch_assoc(mysql_query("SELECT * FROM add_fasiliti  WHERE no_tempahan  ='".$_SESSION['no_tempahan']."'"));
-		
+<?php
+
+$dTq= $db->query("SELECT * FROM add_fasiliti  WHERE no_tempahan  ='".$_SESSION['no_tempahan']."'");
+$dTmph = $dTq->fetch(PDO::FETCH_ASSOC);		
 
 
 ?>
@@ -68,9 +69,9 @@ $dTmph= mysql_fetch_assoc(mysql_query("SELECT * FROM add_fasiliti  WHERE no_temp
   
 <div class="ff-gr ff-clear">
 <div class="ff-g16">
-<? if ($_POST['button2'] != "Daftar"){?>
+<?php if ($_POST['button2'] != "Daftar"){?>
   <form action="" method="post" name="maklumat">
-  <input type="hidden" name="ic" value="<?=$_SESSION['ic1']."-".$_SESSION['ic2']."-".$_SESSION['ic3'];?>">
+  <input type="hidden" name="ic" value="<?php=$_SESSION['ic1']."-".$_SESSION['ic2']."-".$_SESSION['ic3'];?>">
    
   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="hovertable2" style="padding:2px;">
   <tr>
@@ -87,7 +88,7 @@ $dTmph= mysql_fetch_assoc(mysql_query("SELECT * FROM add_fasiliti  WHERE no_temp
 		    </td>
 		  </tr>
           		<tr>
-		  <td colspan="5">&nbsp;<?=$dTmph['fasiliti'];?>
+		  <td colspan="5">&nbsp;<?php=$dTmph['fasiliti'];?>
 		    </td>
 		  </tr>
 		<tr>
@@ -147,7 +148,6 @@ $dTmph= mysql_fetch_assoc(mysql_query("SELECT * FROM add_fasiliti  WHERE no_temp
 </body></html>
 <?php
 }else{
-	extract($_POST);
 	
 	if($caterer == "Caterer BCIC" and $_POST['fasiliti']!="Dewan Serbaguna (Majlis Perkahwinan)"){
 		$caj_bersih = "";
@@ -160,16 +160,14 @@ $dTmph= mysql_fetch_assoc(mysql_query("SELECT * FROM add_fasiliti  WHERE no_temp
 		if($basuh == "Ya" and $_POST['fasiliti']!="Dewan Serbaguna (Majlis Perkahwinan)"){ $caj_basuh = "150.00"; $_POST['bilik_basuhan'] = $caj_basuh;}
 	}
 
-	$insert = "INSERT INTO maklumat(ic, tujuan, bil_peserta, makan, caterer, no_tempahan, caj_caterer, caj_kebersihan, bilik_basuhan)VALUES('".$_POST['ic']."', '$tujuan', '$bil_peserta', '$makan', '$caterer' , '".$_SESSION['no_tempahan']."', '$caj', '".$_POST['caj_kebersihan']."', '".$_POST['bilik_basuhan']."')";
+	print_r($_SESSION);
+	$insert = $db->prepare("INSERT INTO maklumat(ic, tujuan, bil_peserta, makan, caterer, no_tempahan, caj_caterer, caj_kebersihan, bilik_basuhan)VALUES('".$_POST['ic']."', '$tujuan', '$bil_peserta', '$makan', '$caterer' , '".$_SESSION['no_tempahan']."', '$caj', '".$_POST['caj_kebersihan']."', '".$_POST['bilik_basuhan']."')");
+	$insert->execute();
 	
-	//echo $insert;
-	$que_insert = mysql_query($insert);
-	
-	$up = "UPDATE add_fasiliti set status_submit = 1, ic = '".$_POST['ic']."', status_approve = 1 where no_tempahan = '".$_SESSION['no_tempahan']."'";
-	$que_up = mysql_query($up);
+	$up = $db->prepare("UPDATE add_fasiliti set status_submit = '1', ic = '".$_POST['ic']."', status_approve ='1' where no_tempahan = '".$_SESSION['no_tempahan']."'");
 	
 	
-		if($que_up){
+		if($up->execute()){
 		echo "<script type='text/javascript'>";
 		echo "alert('Tempahan Anda Telah Berjaya Direkodkan Ke Dalam Sistem.')";
 		echo "</script>";

@@ -285,9 +285,10 @@ function showfield(name){
 		
 		$query1 = "insert into pelanggan (gelaran,nama_penuh,ic,agensi,coid,sektor,emel,tel_bimbit1,tel_bimbit2,telefon,sambungan,fax,alamat,poskod,daerah,negeri)
 		values('$gelaran','$nama_penuh','$ic','$agensi','$coid','$sektor','$emel','$tel_bimbit1','$tel_bimbit2','$telefon','$ext','$fax','$addr','$pcode','$district','$state')";
-		$result1 = mysql_query($query1);
+		$q = $db->query($query1);
+		$result1 = $q->rowCount();
 		
-		if($result1){
+		if($result1 > 0){
 			header("location:maklumat.php");
 		}
 	}

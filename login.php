@@ -133,9 +133,9 @@ if(!empty($_POST)){
 	if($ic){	
 		$check .= " AND ic = '$ic' OR  ic = '$ic'";
 	}*/
-	$result = mysql_query($check) or die(mysql_error());
+	$result = $db->query($check) ;
 	
-	$check_rows = mysql_num_rows($result);
+	$check_rows = $result->rowCount($result);
 	
 	header("location:terma.php?r=$check_rows");
 

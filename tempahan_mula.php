@@ -9,11 +9,10 @@ date_default_timezone_set('Asia/Kuala Lumpur');
 	$id_fasiliti = $_REQUEST['id_fasiliti'];
 	
 	$query1 = "select * from fasiliti where id_fasiliti = '$id_fasiliti'";
-	$result1 = mysql_query($query1);
-	$num1 = mysql_num_rows($result1);
+	//$result1 = $($query1);
+	$num1 = $db->query($query1);
 	
-	while ($row = mysql_fetch_array($result1))
-	{
+	while($row = $num1->fetch(PDO::FETCH_ASSOC)) {
 		$nama = $row['nama_fasiliti'];
 		$cat = $row['fasiliti'];
 		$halfd = $row['separuh_hari'];
@@ -161,28 +160,37 @@ $tarikh_tamat = date('Y-m-d', strtotime($_POST['trktamat']));
 	while (strtotime($tarikh_mula) <= strtotime($tarikh_tamat)) {
 	
 		
-		$pg=mysql_num_rows(mysql_query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='8AM-12PM' AND status_approve = 2"));
-		$ptg=mysql_num_rows(mysql_query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='2PM-6PM' AND status_approve = 2"));
-		$mlm=mysql_num_rows(mysql_query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='8PM-12AM' AND status_approve = 2"));
-	$pgptg=mysql_num_rows(mysql_query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='8AM-6PM' AND status_approve = 2"));
-	$ptgmlm=mysql_num_rows(mysql_query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='2PM-12AM' AND status_approve = 2"));
-	$sehari=mysql_num_rows(mysql_query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='8AM-12AM' AND status_approve = 2"));
-	
-	if(($pg>=1) && ($ptg>=1) && ($mlm>=1))
-	 $fullbook="Yes";
+		$pg=$db->query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='8AM-12PM' AND status_approve = 2");
+		$pgRow = $pg->rowCount();
+
+		$ptg=$db->query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='2PM-6PM' AND status_approve = 2");
+		$ptgRow = $ptg->rowCount();
+
+		$mlm=$db->query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='8PM-12AM' AND status_approve = 2");
+		$ptgRow = $ptg->rowCount();
+
+		$pgptg=$db->query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='8AM-6PM' AND status_approve = 2");
+		$pgptgRow = $ptg->rowCount();
+
+		$ptgmlm=$db->query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='2PM-12AM' AND status_approve = 2");
+		$ptgmlmRow = $ptg->rowCount();
+
+		$sehari=$db->query("select * from add_fasiliti where tarikh = '$tarikh_mula' AND id_fasiliti = '$id_fasiliti' AND masa='8AM-12AM' AND status_approve = 2");
+		$sehariRow = $ptg->rowCount();
+
+		if(($pgRow>=1) && ($ptgRow>=1) && ($mlmRow>=1))
+		$fullbook="Yes";
+		 
+		if(($pgRow>=1) && ($ptgmlmRow>=1))
+		$fullbook="Yes";
+		
+		if(($pgptgRow>=1) && ($mlmRow>=1))
+		$fullbook="Yes";
+		 
+		if($sehariRow>=1)
+		$fullbook="Yes";
 	 
-	 	if(($pg>=1) && ($ptgmlm>=1))
-	 $fullbook="Yes";
-	
-	if(($pgptg>=1) && ($mlm>=1))
-	 $fullbook="Yes";
-	 
-	 if($sehari>=1)
-	 $fullbook="Yes";
-	 
-	 
-	 
-	$tarikh_mula = date ("Y-m-d", strtotime("+1 day", strtotime($tarikh_mula)));
+	 	$tarikh_mula = date ("Y-m-d", strtotime("+1 day", strtotime($tarikh_mula)));
 	}
 	//echo $id_fasiliti."status :".$fullbook;
 	if( $fullbook !=""){
@@ -217,10 +225,9 @@ if($rows_available < 1){*/
 			$tmt = $_POST['trktmt'];
 	
 			$query1 = "Select * from tempahan where id_fasiliti = '$id_fasiliti' AND tarikh_mula = '$mula' AND tarikh_tamat = '$tamat'";
-			$result1 = mysql_query($query1);
-			$num1 = mysql_num_rows($result1);
+			$result1 = $db->query($query1);
 			
-			while ($row = mysql_fetch_array($result1))
+			while ($row = $result1->fetch(PDO::FETCH_ASSOC))
 			{
 				$trk_mula = $row['tarikh_mula'];
 				$trk_tmt = $row['tarikh_tamat'];
@@ -311,10 +318,10 @@ if($rows_available < 1){*/
 						<td width="38%" rowspan="7" align="left" valign="top"><?php
 				
 				$sql1 = "Select * From range_capacity  where id_fasiliti = '$id_fasiliti'";
-				$result1 = mysql_query($sql1);
-				$num1 = mysql_num_rows($result1);
+				$result1 = $db->query($sql1);
+				//$num1 = mysql_num_rows($result1);
 				
-				while ($row = mysql_fetch_array($result1))
+				while ($row = $result1->fetch(PDO::FETCH_ASSOC))
 				{
 					
 					$range = $row['ranges'];
@@ -494,73 +501,73 @@ if($rows_available < 1){*/
 						<?php 
 						
 						echo $n_trk_mula; $n_trk_mula = date ("d-m-Y", strtotime("+1 day", strtotime($n_trk_mula)));
-						$sq = mysql_query("select * from add_fasiliti where tarikh = '$n_trk_mula'"); $rr = mysql_fetch_array($sq);
+						$sq = $db->query("select * from add_fasiliti where tarikh = '$n_trk_mula'"); $rr = $sq->fetchAll();
 						?>
                     </td>
                     
 					<td align='center'<?php $j = date('Y-m-d', strtotime('yesterday', strtotime($n_trk_mula))); 
-						$qqq1 = mysql_query("select * from add_fasiliti where tarikh = '$j' AND masa = '8AM-12PM' AND  id_fasiliti  ='$id_fasiliti'"); 
-						$rrr1 = mysql_fetch_array($qqq1);
+						$qqq1 = $db->query("select * from add_fasiliti where tarikh = '$j' AND masa = '8AM-12PM' AND  id_fasiliti  ='$id_fasiliti'"); 
+						$rrr1 = $qqq1->fetch(PDO::FETCH_ASSOC);
 						if($rrr1['status_approve']==1){echo "bgcolor='#FFFF00'";}
 						else if ($rrr1['status_approve']==2){echo "bgcolor='#FF0000'";} 
 						else if ($rrr1['status_approve']==3){echo "bgcolor='#FF0000'";}?>>
                     
-                    <input type='radio' class='chkclass' id='C1' name='<?php echo $d = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='8AM-12PM' <?php $d1= date('Y-m-d', strtotime($d)); $sq = mysql_query("select * from add_fasiliti where tarikh = '$d1' AND masa = '8AM-12PM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = mysql_num_rows($sq); if($rr > 0){echo 'disabled';}?>>
+                    <input type='radio' class='chkclass' id='C1' name='<?php echo $d = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='8AM-12PM' <?php $d1= date('Y-m-d', strtotime($d)); $sq = $db->query("select * from add_fasiliti where tarikh = '$d1' AND masa = '8AM-12PM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = $sq->rowCount(); if($rr > 0){echo 'disabled';}?>>
                     
                     </td>
                     
 					<td align='center'<?php $k = date('Y-m-d', strtotime('yesterday', strtotime($n_trk_mula))); 
-						$qqq2 = mysql_query("select * from add_fasiliti where tarikh = '$k' AND masa = '2PM-6PM' AND  id_fasiliti  ='$id_fasiliti'"); 
-						$rrr2 = mysql_fetch_array($qqq2);
+						$qqq2 = $db->query("select * from add_fasiliti where tarikh = '$k' AND masa = '2PM-6PM' AND  id_fasiliti  ='$id_fasiliti'"); 
+						$rrr2 = $qqq2->fetchAll();
 						if($rrr2['status_approve']==1){echo "bgcolor='#FFFF00'";}
 						else if ($rrr2['status_approve']==2){echo "bgcolor='#FF0000'";} 
 						else if ($rrr2['status_approve']==3){echo "bgcolor='#FF0000'";}?>>
                     
-                    <input type='radio' class='chkclass' id='C1' name='<?php echo $e = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='2PM-6PM' <?php  $e1= date('Y-m-d', strtotime($e));$sq = mysql_query("select * from add_fasiliti where tarikh = '$e1' AND masa = '2PM-6PM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = mysql_num_rows($sq); if($rr > 0){echo 'disabled';}?>>
+                    <input type='radio' class='chkclass' id='C1' name='<?php echo $e = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='2PM-6PM' <?php  $e1= date('Y-m-d', strtotime($e));$sq = $db->query("select * from add_fasiliti where tarikh = '$e1' AND masa = '2PM-6PM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = $sq->rowCount(); if($rr > 0){echo 'disabled';}?>>
                     
                     </td>
                     
 					<td align='center'<?php $o = date('Y-m-d', strtotime('yesterday', strtotime($n_trk_mula))); 
-						$qqq3 = mysql_query("select * from add_fasiliti where tarikh = '$o' AND masa = '8PM-12AM' AND  id_fasiliti  ='$id_fasiliti'"); 
-						$rrr3 = mysql_fetch_array($qqq3);
+						$qqq3 = $db->query("select * from add_fasiliti where tarikh = '$o' AND masa = '8PM-12AM' AND  id_fasiliti  ='$id_fasiliti'"); 
+						$rrr3 = $qqq3->fetchAll();
 						if($rrr3['status_approve']==1){echo "bgcolor='#FFFF00'";}
 						else if ($rrr3['status_approve']==2){echo "bgcolor='#FF0000'";} 
 						else if ($rrr3['status_approve']==3){echo "bgcolor='#FF0000'";}?>>
                     
-                    <input type='radio' class='chkclass' id='C1' name='<?php echo $f = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='8PM-12AM' <?php  $f1= date('Y-m-d', strtotime($f)); $sq = mysql_query("select * from add_fasiliti where tarikh = '$f1' AND masa = '8PM-12AM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = mysql_num_rows($sq); if($rr > 0){echo 'disabled';}?>>
+                    <input type='radio' class='chkclass' id='C1' name='<?php echo $f = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='8PM-12AM' <?php  $f1= date('Y-m-d', strtotime($f)); $sq = $db->query("select * from add_fasiliti where tarikh = '$f1' AND masa = '8PM-12AM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = $sq->rowCount(); if($rr > 0){echo 'disabled';}?>>
                     
                     </td>
                     
 					<td align='center'<?php $l = date('Y-m-d', strtotime('yesterday', strtotime($n_trk_mula))); 
-						$qqq4 = mysql_query("select * from add_fasiliti where tarikh = '$l' AND masa = '8AM-6PM' AND  id_fasiliti  ='$id_fasiliti'"); 
-						$rrr4 = mysql_fetch_array($qqq4);
+						$qqq4 = $db->query("select * from add_fasiliti where tarikh = '$l' AND masa = '8AM-6PM' AND  id_fasiliti  ='$id_fasiliti'"); 
+						$rrr4 = $qqq4->fetchAll();
 						if($rrr4['status_approve']==1){echo "bgcolor='#FFFF00'";}
 						else if ($rrr4['status_approve']==2){echo "bgcolor='#FF0000'";} 
 						else if ($rrr4['status_approve']==3){echo "bgcolor='#FF0000'";}?>>
                     
-                    <input type='radio' class='chkclass' id='C1' name='<?php echo $g = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='8AM-6PM' <?php  $g1= date('Y-m-d', strtotime($g)); $sq = mysql_query("select * from add_fasiliti where tarikh = '$g1' AND masa = '8AM-6PM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = mysql_num_rows($sq); if($rr > 0){echo 'disabled';}?>>
+                    <input type='radio' class='chkclass' id='C1' name='<?php echo $g = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='8AM-6PM' <?php  $g1= date('Y-m-d', strtotime($g)); $sq = $db->query("select * from add_fasiliti where tarikh = '$g1' AND masa = '8AM-6PM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = $sq->rowCount(); if($rr > 0){echo 'disabled';}?>>
                     
                     </td>
                     
 					<td align='center'<?php $m = date('Y-m-d', strtotime('yesterday', strtotime($n_trk_mula))); 
-						$qqq5 = mysql_query("select * from add_fasiliti where tarikh = '$m' AND masa = '2PM-12AM' AND  id_fasiliti  ='$id_fasiliti'"); 
-						$rrr5 = mysql_fetch_array($qqq5);
+						$qqq5 = $db->query("select * from add_fasiliti where tarikh = '$m' AND masa = '2PM-12AM' AND  id_fasiliti  ='$id_fasiliti'"); 
+						$rrr5 = $qqq5->fetchAll();
 						if($rrr5['status_approve']==1){echo "bgcolor='#FFFF00'";}
 						else if ($rrr5['status_approve']==2){echo "bgcolor='#FF0000'";} 
 						else if ($rrr5['status_approve']==3){echo "bgcolor='#FF0000'";}?>>
                     
-                    <input type='radio' class='chkclass' id='C1' name='<?php echo $h = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='2PM-12AM' <?php  $h1= date('Y-m-d', strtotime($h)); $sq = mysql_query("select * from add_fasiliti where tarikh = '$h1' AND masa = '2PM-12AM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = mysql_num_rows($sq); if($rr > 0){echo 'disabled';}?>>
+                    <input type='radio' class='chkclass' id='C1' name='<?php echo $h = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='2PM-12AM' <?php  $h1= date('Y-m-d', strtotime($h)); $sq = $db->query("select * from add_fasiliti where tarikh = '$h1' AND masa = '2PM-12AM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = $sq->rowCount(); if($rr > 0){echo 'disabled';}?>>
                     
                     </td>
                     
 					<td align='center'<?php $n = date('Y-m-d', strtotime('yesterday', strtotime($n_trk_mula))); 
-						$qqq6 = mysql_query("select * from add_fasiliti where tarikh = '$n' AND masa = '8AM-12AM' AND id_fasiliti  ='$id_fasiliti'"); 
-						$rrr6 = mysql_fetch_array($qqq6);
+						$qqq6 = $db->query("select * from add_fasiliti where tarikh = '$n' AND masa = '8AM-12AM' AND id_fasiliti  ='$id_fasiliti'"); 
+						$rrr6 = $qqq6->fetchAll();
 						if($rrr6['status_approve']==1){echo "bgcolor='#FFFF00'";}
 						else if ($rrr6['status_approve']==2){echo "bgcolor='#FF0000'";} 
 						else if ($rrr6['status_approve']==3){echo "bgcolor='#FF0000'";}?>>
                      
-                    <input type='radio' class='chkclass' id='C1' name='<?php echo $i = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='8AM-12AM' <?php  $i1= date('Y-m-d', strtotime($i)); $sq = mysql_query("select * from add_fasiliti where tarikh = '$i1' AND masa = '8AM-12AM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = mysql_num_rows($sq); if($rr > 0){echo 'disabled';}?>>
+                    <input type='radio' class='chkclass' id='C1' name='<?php echo $i = date ("d-m-Y", strtotime("yesterday", strtotime($n_trk_mula))); ?>[]' value='8AM-12AM' <?php  $i1= date('Y-m-d', strtotime($i)); $sq = $db->query("select * from add_fasiliti where tarikh = '$i1' AND masa = '8AM-12AM' AND  id_fasiliti  ='$id_fasiliti' AND status_approve = 2"); $rr = $sq->rowCount(); if($rr > 0){echo 'disabled';}?>>
                     
                     </td>
 				</tr>

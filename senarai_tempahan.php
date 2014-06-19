@@ -7,7 +7,8 @@ include 'includes/functions.php';
 		
 if (isset($_REQUEST['act']))	{
 		
-	mysql_query("DELETE FROM add_fasiliti WHERE id='".$_REQUEST['id']."' ") or die (mysql_error());
+	$del = $db->prepare("DELETE FROM add_fasiliti WHERE id='".$_REQUEST['id']."' ") or die (mysql_error());
+  $del->execute();
 
 	}
 ?>
@@ -49,9 +50,9 @@ if (isset($_REQUEST['act']))	{
   </tr>
   <?php
   $a = 1;
-  $sql = mysql_query("select * from add_fasiliti where no_tempahan= '".$_SESSION['no_tempahan']."' order by id_fasiliti asc, tarikh desc");
+  $sql = $db->query("select * from add_fasiliti where no_tempahan= '".$_SESSION['no_tempahan']."' order by id_fasiliti asc, tarikh desc");
   
-  while($res = mysql_fetch_array($sql)){
+  while($res = $sql->fetch(PDO::FETCH_ASSOC)){
   $ifasrama = substr($res['kategori'], 0, 6);
 $bilhariasrama=($ifasrama == 'Asrama' ? " X ".$res['bil_bilik']." bilik" : "");
 $harga=($ifasrama == 'Asrama' ? $res['harga']*$res['bil_bilik'] : $res['harga']);
@@ -163,8 +164,8 @@ else if($button == "Hantar"){
 }
 else if($button == "Batal Tempahan"){
 	
-	$del = "DELETE FROM add_fasiliti where no_tempahan = '".$_SESSION['no_tempahan']."'";
-	$que_del = mysql_query($del);
+	$del = $db->prepare("DELETE FROM add_fasiliti where no_tempahan = '".$_SESSION['no_tempahan']."'");
+	$que_del = $del->execute();
 	
 	session_destroy();
 	header("location:index.php");

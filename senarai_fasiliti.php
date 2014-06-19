@@ -15,8 +15,8 @@ if($fasiliti != "")
 		$query1 = "Select * from fasiliti";
 	}
 	
-	$result1 = mysql_query($query1);
-	$num1 = mysql_num_rows($result1);
+	$num1 = $db->query($query1);
+	//$num1 = mysql_num_rows($result1);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html  xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
@@ -58,7 +58,7 @@ if($fasiliti != "")
 				</tr>
 			<?php
 				$counter = 1;
-				while ($row = mysql_fetch_array($result1))
+				while($row = $num1->fetch(PDO::FETCH_ASSOC)) 
 				{
 					$kod1 = $row['kod_fasiliti'];
 					$nama = $row['nama_fasiliti'];

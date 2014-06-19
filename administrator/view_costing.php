@@ -169,7 +169,7 @@ oForm.txtTotal.value =TotalHARGA;
   
 <div class="ff-gr ff-clear">
 <div class="ff-g16">
-<?  if ($_POST['bSimpan'] != "Simpan"){ ?>
+<?php  if ($_POST['bSimpan'] != "Simpan"){ ?>
   <form action="" method="post" name="step">
     
   <table border="0" width="100%" cellspacing="0" cellpadding="2" class="hovertable2">
@@ -732,10 +732,10 @@ $qty=($ifasrama == 'Asrama' ? $row['bil_bilik']." bilik" : $row['jum_hari']." ha
 			</table>
                     
 <br />
-<br /><input type="hidden" name="id" value="<?=$_REQUEST['id'];?>">
-<input type="hidden" name="no_tempahan" value="<?=$_REQUEST['no_tempahan'];?>">
+<br /><input type="hidden" name="id" value="<?php echo $_REQUEST['id'];?>">
+<input type="hidden" name="no_tempahan" value="<?php echo $_REQUEST['no_tempahan'];?>">
     <center></form>
-	<? }else{
+	<?php }else{
 	
 	extract($_POST);
 	
